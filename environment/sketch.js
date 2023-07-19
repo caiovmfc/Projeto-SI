@@ -32,8 +32,13 @@ class Environment {
     return grid;
   }
 
+  getGrid(){
+    return this.grid;
+  }
+
   draw() {
     // Draw the entire environment based on the grid
+    noStroke();
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let x = j * this.tileSize;
@@ -43,11 +48,11 @@ class Environment {
         if (terrain === 0) {
           fill(100, 255, 100); // grass color
         } else if (terrain === 1) {
-          fill(100, 149, 237); // water color
+          fill(100, 150, 240); // water color
         } else if (terrain === 2) {
-          fill(139, 137, 137); // mountain color
+          fill(140, 140, 140); // mountain color
         } else if(terrain === 3){
-          fill(200, 200, 0);
+          fill(200, 200, 0); //obstacle color
         }
 
         rect(x, y, this.tileSize, this.tileSize);
@@ -70,7 +75,7 @@ class Environment {
 let env;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(500, 500);
   let rows = 20;
   let cols = 20;
   let tileSize = width / cols;
