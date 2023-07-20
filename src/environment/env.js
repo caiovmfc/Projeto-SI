@@ -10,10 +10,12 @@ class Environment {
     this.tileSize = tileSize;
     this.terrainNoise = terrainNoise;
     this.waterNoise = waterNoise;
-    this.regenerateGrid();
+    this.regenerateGrid(terrainNoise, waterNoise);
   }
 
-  regenerateGrid() {
+  regenerateGrid(terrainNoise, waterNoise) {
+    this.terrainNoise = terrainNoise;
+    this.waterNoise = waterNoise;
     this.grid = this.createGrid();
   }
 

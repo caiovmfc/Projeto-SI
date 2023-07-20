@@ -7,7 +7,7 @@ function setup() {
   let cols = 40;
   let tileSize = width / cols;
   env = new Environment(rows, cols, tileSize, terrainNoise, waterNoise);
-  manager = new Manager(() => env.regenerateGrid())
+  manager = new Manager((tNoise, wNoise) => env.regenerateGrid(tNoise, wNoise));
 }
 
 function draw() {
