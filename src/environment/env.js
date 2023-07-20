@@ -4,7 +4,8 @@ const TERRAIN_MUD = 2;
 const TERRAIN_OBSTACLE = 3;
 
 class Environment {
-  constructor(rows, cols, tileSize, terrainNoise, waterNoise) {
+  constructor(sketch, rows, cols, tileSize, terrainNoise, waterNoise) {
+    this.sketch = sketch;
     this.rows = rows;
     this.cols = cols;
     this.tileSize = tileSize;
@@ -22,13 +23,16 @@ class Environment {
   // Create a 2D grid using Perlin noise to determine the terrain type
   createGrid() {
     let grid = [];
-    let randomSeed = int(random(0, 100));
+    let randomSeed = this.sketch.random(0, 100);
     for (let i = 0; i < this.rows; i++) {
       let row = [];
       for (let j = 0; j < this.cols; j++) {
         // Map the noise value to the range [0, 1]
-        noiseSeed(randomSeed);
-        let noiseValue = noise(j * this.terrainNoise, i * this.terrainNoise);
+        this.sketch.noiseSeed(randomSeed);
+        let noiseValue = this.sketch.noise(
+          j * this.terrainNoise,
+          i * this.terrainNoise
+        );
         let terrain;
         if (noiseValue < 0.35) {
           terrain = TERRAIN_MUD;
@@ -56,7 +60,7 @@ class Environment {
   // Draw the entire environment based on the grid
   draw() {
     // noStroke();
-    stroke(100, 100, 100);
+    this.sketch.stroke(100, 100, 100);
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let x = j * this.tileSize;
@@ -64,16 +68,16 @@ class Environment {
         let terrain = this.grid[i][j];
 
         if (terrain === TERRAIN_SAND) {
-          fill(236, 214, 168);
+          this.sketch.fill(236, 214, 168);
         } else if (terrain === TERRAIN_MUD) {
-          fill(92, 64, 40);
+          this.sketch.fill(92, 64, 40);
         } else if (terrain === TERRAIN_WATER) {
-          fill(100, 150, 240);
+          this.sketch.fill(100, 150, 240);
         } else if (terrain === TERRAIN_OBSTACLE) {
-          fill(120, 120, 120);
+          this.sketch.fill(120, 120, 120);
         }
 
-        rect(x, y, this.tileSize, this.tileSize);
+        this.sketch.rect(x, y, this.tileSize, this.tileSize);
       }
     }
   }
@@ -108,9 +112,9 @@ class Environment {
         tuplaFinal[1] * this.tileSize,
       ];
 
-      stroke(0);
-      fill(color);
-      line(xInicial, yInicial, xFinal, yFinal);
+      this.sketch.stroke(0);
+      this.sketch.fill(color);
+      this.sketch.line(xInicial, yInicial, xFinal, yFinal);
     }
   }
 }
