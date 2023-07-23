@@ -2,35 +2,43 @@ var terrainNoise = 0.15; // Adjust this value to control the level of detail in 
 
 let env;
 let manager;
+let agent;
+
+let canvasSize = 720;
 
 const mainWindow = (sketch) => {
   sketch.setup = () => {
-    sketch.createCanvas(600, 540);
-    let rows = 40;
-    let cols = 40;
-    let tileSize = sketch.width / cols;
+    sketch.createCanvas(canvasSize, canvasSize);
+    let rows = 30;
+    let cols = 30;
+    let tileSize = (sketch.width / cols);
     env = new Environment(
       sketch,
       rows,
       cols,
       tileSize,
-      terrainNoise,
-      waterNoise
+      terrainNoise
     );
+    agent = new Agent(sketch, env.getGrid(), sketch.createVector(20,20), tileSize);
   };
 
   sketch.draw = () => {
     sketch.background(220);
     env.draw();
+    agent.draw();
   };
 };
 
 const menu = (sketch) => {
   sketch.setup = () => {
     canvas = sketch.createCanvas(300, 300);
-    canvas.position(0, 550);
-    manager = new Manager(sketch, (tNoise) =>
-      env.regenerateGrid(tNoise)
+    canvas.position(canvasSize, 0);
+    manager = new Manager(sketch, 
+      (tNoise) => {
+        const newGrid = env.regenerateGrid(tNoise);
+        agent.setGrid(newGrid);
+      },
+      () => console.log(agent.bfs(env.targetPos))
     );
   };
 
@@ -40,7 +48,7 @@ const menu = (sketch) => {
     sketch.textFont("Georgia");
     sketch.text("Terrain noise", 10, 32);
     sketch.fill(0);
-    sketch.text(`${manager.getTerrainNoise()}`, 150, 55);
+    sketch.text(`${manager.getTerrainNoise()}`, 170, 55);
   };
 };
 
