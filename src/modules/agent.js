@@ -175,14 +175,6 @@ class Agent{
             }
         }
 
-        // let visited = [];
-        // for(let i = 0; i < tam; i++){
-        //     visited[i] = [];
-        //     for(let j = 0; j < tam; j++){
-        //         visited[i][j] = false;
-        //     }
-        // }
-
         dist[this.initialPos.x][this.initialPos.y] = 0;
         
         const pq = new PriorityQueue();
@@ -284,44 +276,96 @@ class Agent{
     }
 }
 
-
 class PriorityQueue {
-    constructor() {
-      this.items = [];
+  constructor() {
+    this.items = [];
+  }
+
+  enqueue(priority, value) {
+    const newItem = { priority, value };
+    this.items.push(newItem);
+    this.bubbleUp(this.items.length - 1);
+  }
+
+  dequeue() {
+    if (this.isEmpty()) {
+      return null;
     }
-  
-    enqueue(priority, value) {
-      this.items.push({ priority, value });
-      this.sort();
+    if (this.items.length === 1) {
+      return this.items.pop();
     }
-  
-    dequeue() {
-      if (this.isEmpty()) {
-        return null;
+    const root = this.items[0];
+    this.items[0] = this.items.pop();
+    this.bubbleDown(0);
+    return root;
+  }
+
+  front() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items[0];
+  }
+
+  rear() {
+    if (this.isEmpty()) {
+      return null;
+    }
+    return this.items[this.items.length - 1];
+  }
+
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  bubbleUp(index) {
+    const item = this.items[index];
+    while (index > 0) {
+      const parentIndex = Math.floor((index - 1) / 2);
+      const parentItem = this.items[parentIndex];
+      if (item.priority >= parentItem.priority) {
+        break;
       }
-      return this.items.shift();
+      this.items[index] = parentItem;
+      index = parentIndex;
     }
-  
-    front() {
-      if (this.isEmpty()) {
-        return null;
+    this.items[index] = item;
+  }
+
+  bubbleDown(index) {
+    const length = this.items.length;
+    const item = this.items[index];
+
+    while (true) {
+      let leftChildIndex = 2 * index + 1;
+      let rightChildIndex = 2 * index + 2;
+      let swapIndex = null;
+
+      if (leftChildIndex < length) {
+        const leftChild = this.items[leftChildIndex];
+        if (leftChild.priority < item.priority) {
+          swapIndex = leftChildIndex;
+        }
       }
-      return this.items[0];
-    }
-  
-    rear() {
-      if (this.isEmpty()) {
-        return null;
+
+      if (rightChildIndex < length) {
+        const rightChild = this.items[rightChildIndex];
+        if (
+          (swapIndex === null && rightChild.priority < item.priority) ||
+          (swapIndex !== null && rightChild.priority < this.items[swapIndex].priority)
+        ) {
+          swapIndex = rightChildIndex;
+        }
       }
-      return this.items[this.items.length - 1];
+
+      if (swapIndex === null) {
+        break;
+      }
+
+      this.items[index] = this.items[swapIndex];
+      index = swapIndex;
     }
-  
-    isEmpty() {
-      return this.items.length === 0;
-    }
-  
-    sort() {
-      this.items.sort((a, b) => a.priority - b.priority);
-    }
+
+    this.items[index] = item;
+  }
 }
-  
