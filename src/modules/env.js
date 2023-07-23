@@ -12,15 +12,16 @@ class Environment {
     this.terrainNoise = terrainNoise;
     this.regenerateGrid(terrainNoise);
     this.randomPos = this.getRandomPos();
-    this.targetPos = sketch.createVector(this.randomPos[0], this.randomPos[1]);
+    this.targetPos = this.sketch.createVector(this.randomPos[0], this.randomPos[1]);
   }
 
   getRandomPos(){
     let x = 0;
-    let y =0;
+    let y = 0;
+    const width = this.grid.length;
     while (true){
-      x = Math.floor(this.sketch.random(0,29)); 
-      y = Math.floor(this.sketch.random(0,29));
+      x = Math.floor(this.sketch.random(0,width-1)); 
+      y = Math.floor(this.sketch.random(0,width-1));
 
       if((this.grid[y])[x] != TERRAIN_OBSTACLE){
         break;
@@ -33,6 +34,11 @@ class Environment {
     this.terrainNoise = terrainNoise;
     this.grid = this.createGrid();
     return this.grid;
+  }
+
+  randomTargetPos(){
+    this.randomPos = this.getRandomPos();
+    this.targetPos = this.sketch.createVector(this.randomPos[0], this.randomPos[1]);
   }
 
   // Create a 2D grid using Perlin noise to determine the terrain type

@@ -1,5 +1,5 @@
 class Agent{
-    constructor(sketch, map, initialPos, tileSize) {
+    constructor(sketch, map, tileSize) {
         this.map = map;
         this.sketch = sketch;
         this.tileSize = tileSize;
@@ -10,7 +10,7 @@ class Agent{
         this.maxSpeed = 4;
         this.maxForce = 0.25;
         this.r = this.tileSize;
-        this.initialPos = initialPos;
+        this.initialPos = this.pos;
     }
 
     setGrid(map){
@@ -20,16 +20,24 @@ class Agent{
     getRandomPos(){
         let x = 0;
         let y = 0;
+        const width = this.map.length;
         while (true){
-          x = Math.floor(this.sketch.random(0,29)); 
-          y = Math.floor(this.sketch.random(0,29));
+          x = Math.floor(this.sketch.random(0,width-1)); 
+          y = Math.floor(this.sketch.random(0,width-1));
         
           if((this.map[y])[x] != Infinity){
             break;
           }
         }
         return [x, y];
-      }
+    }
+
+    setRandomPos(){
+        this.randomPos = this.getRandomPos();
+        this.pos = this.sketch.createVector(this.randomPos[0], this.randomPos[1]);
+        this.initialPos = this.pos;
+    }
+
 
     moveTo(target) {
         let force = p5.Vector.sub(target, this.pos);
@@ -49,15 +57,16 @@ class Agent{
 
     getNeighbors(current){
         let neighbors = [];
+        let length = this.map.length;
         let x = current.x;
         let y = current.y;
-        if (x < 29) { //right neighbor
+        if (x < length-1) {
             neighbors.push(this.sketch.createVector(x+1, y));
         }
         if (x > 0) {
             neighbors.push(this.sketch.createVector(x-1, y));
         }
-        if (y < 29) {
+        if (y < length-1) {
             neighbors.push(this.sketch.createVector(x, y+1));
         }
         if (y > 0) {
@@ -228,7 +237,7 @@ class Agent{
         return [x * width + width / 2, y * width + width / 2];
     }
 
-    draw() {
+    draw(targetPos) {
         const agentPos = this.getSquareCenter(this.pos.x, this.pos.y, this.tileSize);
         this.sketch.stroke(0);
         this.sketch.strokeWeight(0.2);
@@ -238,5 +247,12 @@ class Agent{
         this.sketch.rotate(this.vel.heading());
         this.sketch.triangle(-this.r/2, -this.r / 2.5, -this.r/2, this.r / 2.5, this.r/2, 0);
         this.sketch.pop();
+
+        const v = this.bfs(targetPos);
+        for(let i of v){
+            let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+            this.sketch.fill(0, 255, 0);
+            this.sketch.circle(pos[0], pos[1], 5);
+        }
     }
 }

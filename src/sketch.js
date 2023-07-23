@@ -19,13 +19,13 @@ const mainWindow = (sketch) => {
       tileSize,
       terrainNoise
     );
-    agent = new Agent(sketch, env.getGrid(), sketch.createVector(20,20), tileSize);
+    agent = new Agent(sketch, env.getGrid(), tileSize);
   };
 
   sketch.draw = () => {
     sketch.background(220);
     env.draw();
-    agent.draw();
+    agent.draw(env.targetPos);
   };
 };
 
@@ -36,9 +36,13 @@ const menu = (sketch) => {
     manager = new Manager(sketch, 
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
+        env.randomTargetPos();
         agent.setGrid(newGrid);
+        agent.setRandomPos();
       },
-      () => console.log(agent.bfs(env.targetPos))
+      () => {
+        console.log(agent.bfs(env.targetPos));
+      }
     );
   };
 
