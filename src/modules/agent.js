@@ -99,7 +99,7 @@ class Agent{
                 break;
             }
             for(let neighbor of this.getNeighbors(current)){
-                if(!this.vectorArrayIncludes(visited, neighbor)){
+                if(!this.vectorArrayIncludes(visited, neighbor) && (this.map[neighbor.y])[neighbor.x] !== Infinity){
                     visited.push(neighbor);
                     queue.push(neighbor);
                     path[`${neighbor.x},${neighbor.y}`] = current;
