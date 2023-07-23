@@ -60,16 +60,16 @@ class Agent{
         let length = this.map.length;
         let x = current.x;
         let y = current.y;
-        if (x < length-1) {
+        if (x < length-1 && this.map[y][x+1] !== Infinity) {
             neighbors.push(this.sketch.createVector(x+1, y));
         }
-        if (x > 0) {
+        if (x > 0 && this.map[y][x-1] !== Infinity) {
             neighbors.push(this.sketch.createVector(x-1, y));
         }
-        if (y < length-1) {
+        if (y < length-1 && this.map[y+1][x] !== Infinity) {
             neighbors.push(this.sketch.createVector(x, y+1));
         }
-        if (y > 0) {
+        if (y > 0 && this.map[y-1][x] !== Infinity) {
             neighbors.push(this.sketch.createVector(x, y-1));
         }
         return neighbors;
@@ -89,6 +89,7 @@ class Agent{
         let queue = [];
         let visited = [];
         let path = [];
+        let found = false;
 
         queue.push(this.initialPos);
         visited.push(this.initialPos);
@@ -96,10 +97,11 @@ class Agent{
         while(queue.length > 0){
             let current = queue.shift();
             if(current.x == targetPos.x && current.y == targetPos.y){
+                found = true;
                 break;
             }
             for(let neighbor of this.getNeighbors(current)){
-                if(!this.vectorArrayIncludes(visited, neighbor) && (this.map[neighbor.y])[neighbor.x] !== Infinity){
+                if(!this.vectorArrayIncludes(visited, neighbor)){
                     visited.push(neighbor);
                     queue.push(neighbor);
                     path[`${neighbor.x},${neighbor.y}`] = current;
@@ -107,13 +109,15 @@ class Agent{
             }
         }
 
-        let currentPosition = targetPos;
-        while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
-            path.push(currentPosition);
-            currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+        if(found){
+            let currentPosition = targetPos;
+            while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
+                path.push(currentPosition);
+                currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+            }
+            path.push(this.initialPos);
+            path.reverse();
         }
-        path.push(this.initialPos);
-        path.reverse();
 
         return path;
     }
@@ -122,6 +126,7 @@ class Agent{
         let stack = [];
         let visited = [];
         let path = [];
+        let found = false;
 
         stack.push(this.initialPos);
         visited.push(this.initialPos);
@@ -129,6 +134,7 @@ class Agent{
         while(stack.length > 0){
             let current = stack.pop();
             if(current.x == targetPos.x && current.y == targetPos.y){
+                found = true;
                 break;
             }
             for(let neighbor of this.getNeighbors(current)){
@@ -140,42 +146,85 @@ class Agent{
             }
         }
 
-        let currentPosition = targetPos;
-        while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
-            path.push(currentPosition);
-            currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+        if(found){
+            let currentPosition = targetPos;
+            while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
+                path.push(currentPosition);
+                currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+            }
+            path.push(this.initialPos);
+            path.reverse();
         }
-        path.push(this.initialPos);
-        path.reverse();
 
         return path;
     }
 
     dijkstra(targetPos){
-        let queue = [];
-        let visited = [];
+        let dist = []
+        let tam = this.map.length;
+        let found = false;
         let path = [];
-        let current = this.map.get(this.pos.x, this.pos.y);
-        let target = this.map.get(targetPos.x, targetPos.y);
-        queue.push(current);
-        visited.push(current);
-        while (queue.length > 0) {
-            current = queue.shift();
-            if (current === target) {
+        let visited = [];
+
+        for(let i = 0; i < tam; i++){
+            dist[i] = [];
+            visited[i] = [];
+            for(let j = 0; j < tam; j++){
+                dist[i][j] = Infinity;
+                visited[i][j] = false;
+            }
+        }
+
+        // let visited = [];
+        // for(let i = 0; i < tam; i++){
+        //     visited[i] = [];
+        //     for(let j = 0; j < tam; j++){
+        //         visited[i][j] = false;
+        //     }
+        // }
+
+        dist[this.initialPos.x][this.initialPos.y] = 0;
+        
+        const pq = new PriorityQueue();
+        pq.enqueue(0, this.initialPos);
+        let i = 0;
+
+        while(!pq.isEmpty()){
+            i++;
+            const w = pq.front().priority;
+            const v = pq.front().value;
+            pq.dequeue();
+
+            if(v.x == targetPos.x && v.y == targetPos.y){
+                found = true;
                 break;
             }
-            for (let neighbor of current.neighbors) {
-                if (!visited.includes(neighbor)) {
-                    visited.push(neighbor);
-                    neighbor.parent = current;
-                    queue.push(neighbor);
+
+            if(w > dist[v.x][v.y]){
+                continue;
+            }
+
+            for(let neighbor of this.getNeighbors(v)){
+                const nextV = neighbor;
+                const nextW = this.map[neighbor.y][neighbor.x];
+
+                if(dist[nextV.x][nextV.y] > dist[v.x][v.y] + nextW){
+                    dist[nextV.x][nextV.y] = dist[v.x][v.y] + nextW;
+                    pq.enqueue(dist[nextV.x][nextV.y], nextV);
+
+                    path[`${nextV.x},${nextV.y}`] = v;
                 }
             }
-            queue.sort((a, b) => a.cost - b.cost);
         }
-        while (current.parent) {
-            path.push(current);
-            current = current.parent;
+
+        if(found){
+            let currentPosition = targetPos;
+            while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
+                path.push(currentPosition);
+                currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+            }
+            path.push(this.initialPos);
+            path.reverse();
         }
 
         return path;
@@ -226,7 +275,7 @@ class Agent{
         this.sketch.triangle(-this.r/2, -this.r / 2.5, -this.r/2, this.r / 2.5, this.r/2, 0);
         this.sketch.pop();
 
-        const v = this.bfs(targetPos);
+        const v = this.dijkstra(targetPos);
         for(let i of v){
             let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
             this.sketch.fill(0, 255, 0);
@@ -234,3 +283,45 @@ class Agent{
         }
     }
 }
+
+
+class PriorityQueue {
+    constructor() {
+      this.items = [];
+    }
+  
+    enqueue(priority, value) {
+      this.items.push({ priority, value });
+      this.sort();
+    }
+  
+    dequeue() {
+      if (this.isEmpty()) {
+        return null;
+      }
+      return this.items.shift();
+    }
+  
+    front() {
+      if (this.isEmpty()) {
+        return null;
+      }
+      return this.items[0];
+    }
+  
+    rear() {
+      if (this.isEmpty()) {
+        return null;
+      }
+      return this.items[this.items.length - 1];
+    }
+  
+    isEmpty() {
+      return this.items.length === 0;
+    }
+  
+    sort() {
+      this.items.sort((a, b) => a.priority - b.priority);
+    }
+}
+  

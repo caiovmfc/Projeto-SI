@@ -41,7 +41,7 @@ const menu = (sketch) => {
         agent.setRandomPos();
       },
       () => {
-        console.log(agent.bfs(env.targetPos));
+        console.log(agent.dijkstra(env.targetPos));
       }
     );
   };
