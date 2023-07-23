@@ -1,5 +1,4 @@
 var terrainNoise = 0.15; // Adjust this value to control the level of detail in the terrain
-var waterNoise = 0.1;
 
 let env;
 let manager;
