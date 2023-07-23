@@ -88,7 +88,7 @@ class Agent{
     bfs(targetPos){
         let queue = [];
         let visited = [];
-        let path = []
+        let path = [];
 
         queue.push(this.initialPos);
         visited.push(this.initialPos);
@@ -102,74 +102,52 @@ class Agent{
                 if(!this.vectorArrayIncludes(visited, neighbor)){
                     visited.push(neighbor);
                     queue.push(neighbor);
+                    path[`${neighbor.x},${neighbor.y}`] = current;
                 }
             }
         }
-        return visited;
-    }
 
-    bfsTodaFudida(targetPos) {
-        let queue = [];
-        let visited = [];
-        let path = [];
-        let parent = [];
-        let current = this.initialPos;
-
-        queue.push(current);
-        visited.push(current);
-        while (queue.length > 0) {
-            current = queue.shift();
-
-            
-
-            if (current.x == targetPos.x && current.y == targetPos.y) {
-                break;
-            }
-            for (let neighbor of this.getNeighbors(current)) {
-                if (!visited.includes(neighbor)) {////
-                    visited.push(neighbor);
-                    console.log(neighbor.x * 30 + neighbor.y)
-                    parent[neighbor.x * 30 + neighbor.y] = current;
-                    queue.push(neighbor);
-                }
-            }
+        let currentPosition = targetPos;
+        while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
+            path.push(currentPosition);
+            currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
         }
-        while (current.parent) {
-            path.push(current);
-            current = parent[current];
-            break;
-        }
+        path.push(this.initialPos);
+        path.reverse();
 
-        
-        
-        return visited;
+        return path;
     }
 
     dfs(targetPos){
         let stack = [];
         let visited = [];
         let path = [];
-        let current = this.map.get(this.pos.x, this.pos.y);
-        let target = this.map.get(targetPos.x, targetPos.y);
-        stack.push(current);
-        visited.push(current);
-        while (stack.length > 0) {
-            current = stack.pop();
-            if (current === target) {
+
+        stack.push(this.initialPos);
+        visited.push(this.initialPos);
+
+        while(stack.length > 0){
+            let current = stack.pop();
+            if(current.x == targetPos.x && current.y == targetPos.y){
                 break;
             }
-            for (let neighbor of current.neighbors) {
-                if (!visited.includes(neighbor)) {
+            for(let neighbor of this.getNeighbors(current)){
+                if(!this.vectorArrayIncludes(visited, neighbor)){
                     visited.push(neighbor);
-                    neighbor.parent = current;
                     stack.push(neighbor);
+                    path[`${neighbor.x},${neighbor.y}`] = current;
                 }
             }
         }
-        while (current.parent) {
-            path.push(current);
-            current = current.parent;
+
+        let currentPosition = targetPos;
+        while(currentPosition.x != this.initialPos.x || currentPosition.y != this.initialPos.y){
+            path.push(currentPosition);
+            currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
         }
+        path.push(this.initialPos);
+        path.reverse();
+
         return path;
     }
 
