@@ -29,8 +29,8 @@ const menu = (sketch) => {
   sketch.setup = () => {
     canvas = sketch.createCanvas(300, 300);
     canvas.position(0, 550);
-    manager = new Manager(sketch, (tNoise, wNoise) =>
-      env.regenerateGrid(tNoise, wNoise)
+    manager = new Manager(sketch, (tNoise) =>
+      env.regenerateGrid(tNoise)
     );
   };
 
@@ -39,10 +39,8 @@ const menu = (sketch) => {
     sketch.textSize(16);
     sketch.textFont("Georgia");
     sketch.text("Terrain noise", 10, 32);
-    sketch.text("Water noise", 10, 92);
     sketch.fill(0);
     sketch.text(`${manager.getTerrainNoise()}`, 150, 55);
-    sketch.text(`${manager.getWaterNoise()}`, 150, 115);
   };
 };
 

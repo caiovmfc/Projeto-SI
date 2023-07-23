@@ -4,19 +4,18 @@ const TERRAIN_MUD = 2;
 const TERRAIN_OBSTACLE = 3;
 
 class Environment {
-  constructor(sketch, rows, cols, tileSize, terrainNoise, waterNoise) {
+  constructor(sketch, rows, cols, tileSize, terrainNoise) {
     this.sketch = sketch;
     this.rows = rows;
     this.cols = cols;
     this.tileSize = tileSize;
     this.terrainNoise = terrainNoise;
     this.waterNoise = waterNoise;
-    this.regenerateGrid(terrainNoise, waterNoise);
+    this.regenerateGrid(terrainNoise);
   }
 
-  regenerateGrid(terrainNoise, waterNoise) {
+  regenerateGrid(terrainNoise) {
     this.terrainNoise = terrainNoise;
-    this.waterNoise = waterNoise;
     this.grid = this.createGrid();
   }
 
