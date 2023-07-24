@@ -84,7 +84,7 @@ class Agent {
     return false;
   }
 
-  bfs(targetPos) {
+  async bfs(targetPos) {
     let queue = [];
     let visited = [];
     let path = [];
@@ -104,6 +104,10 @@ class Agent {
           visited.push(neighbor);
           queue.push(neighbor);
           path[`${neighbor.x},${neighbor.y}`] = current;
+          let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
+          this.sketch.fill(0, 255, 0);
+          this.sketch.circle(pos[0], pos[1], 5);
+          await this.sleep(75);
         }
       }
     }
@@ -119,6 +123,13 @@ class Agent {
       }
       path.push(this.initialPos);
       path.reverse();
+    }
+
+    for (let i of path) {
+      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+      this.sketch.fill(255, 0, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+      await this.sleep(100);
     }
 
     return path;
@@ -286,12 +297,18 @@ class Agent {
     );
     this.sketch.pop();
 
-    const v = this.dijkstra(targetPos);
-    for (let i of v) {
-      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-      this.sketch.fill(0, 255, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
-    }
+    // const v = this.dijkstra(targetPos);
+    // for (let i of v) {
+    //   let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+    //   this.sketch.fill(0, 255, 0);
+    //   this.sketch.circle(pos[0], pos[1], 5);
+    // }
+  }
+
+  sleep(millisecondsDuration) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, millisecondsDuration);
+    });
   }
 }
 

@@ -18,11 +18,11 @@ const mainWindow = (sketch) => {
     let tileSize = sketch.width / cols;
     env = new Environment(sketch, rows, cols, tileSize, terrainNoise);
     agent = new Agent(sketch, env.getGrid(), tileSize);
+    sketch.background(220);
+    env.draw();
   };
 
   sketch.draw = () => {
-    sketch.background(220);
-    env.draw();
     agent.draw(env.targetPos);
   };
 };
@@ -36,6 +36,7 @@ const menu = (sketch) => {
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
         env.randomTargetPos();
+        env.draw();
         agent.setGrid(newGrid);
         agent.setRandomPos();
       },
