@@ -1,5 +1,11 @@
 class Manager {
-  constructor(sketch, regenTerrainCallback, bfsCallback) {
+  constructor(
+    sketch,
+    regenTerrainCallback,
+    bfsCallback,
+    dfsCallback,
+    dijkstraCallback
+  ) {
     this.sketch = sketch;
     this.sliders = {
       terrainNoise: this.sketch.createSlider(0, 1, 0.15, 0.01),
@@ -15,7 +21,15 @@ class Manager {
 
     this.bfsButton = this.sketch.createButton("BFS");
     this.bfsButton.position(730, 105);
-    this.bfsButton.mousePressed(() => bfsCallback());
+    this.bfsButton.mousePressed(bfsCallback);
+
+    this.dfsButton = this.sketch.createButton("DFS");
+    this.dfsButton.position(730, 135);
+    this.dfsButton.mousePressed(dfsCallback);
+
+    this.dijkstraButton = this.sketch.createButton("Dijkstra");
+    this.dijkstraButton.position(730, 165);
+    this.dijkstraButton.mousePressed(dijkstraCallback);
   }
 
   getTerrainNoise() {
