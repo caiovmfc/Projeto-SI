@@ -12,18 +12,21 @@ class Environment {
     this.terrainNoise = terrainNoise;
     this.regenerateGrid(terrainNoise);
     this.randomPos = this.getRandomPos();
-    this.targetPos = this.sketch.createVector(this.randomPos[0], this.randomPos[1]);
+    this.targetPos = this.sketch.createVector(
+      this.randomPos[0],
+      this.randomPos[1]
+    );
   }
 
-  getRandomPos(){
+  getRandomPos() {
     let x = 0;
     let y = 0;
     const width = this.grid.length;
-    while (true){
-      x = Math.floor(this.sketch.random(0,width-1)); 
-      y = Math.floor(this.sketch.random(0,width-1));
+    while (true) {
+      x = Math.floor(this.sketch.random(0, width - 1));
+      y = Math.floor(this.sketch.random(0, width - 1));
 
-      if((this.grid[y])[x] != TERRAIN_OBSTACLE){
+      if (this.grid[y][x] != TERRAIN_OBSTACLE) {
         break;
       }
     }
@@ -36,9 +39,12 @@ class Environment {
     return this.grid;
   }
 
-  randomTargetPos(){
+  randomTargetPos() {
     this.randomPos = this.getRandomPos();
-    this.targetPos = this.sketch.createVector(this.randomPos[0], this.randomPos[1]);
+    this.targetPos = this.sketch.createVector(
+      this.randomPos[0],
+      this.randomPos[1]
+    );
   }
 
   // Create a 2D grid using Perlin noise to determine the terrain type
@@ -79,7 +85,7 @@ class Environment {
   }
 
   //gets the center positonof the square on the coordenate x, y
-  getSquareCenter(x, y, width){
+  getSquareCenter(x, y, width) {
     return [x * width + width / 2, y * width + width / 2];
   }
 
@@ -102,19 +108,27 @@ class Environment {
         } else if (terrain === TERRAIN_OBSTACLE) {
           this.sketch.fill(120, 120, 120);
         }
-        
+
         this.sketch.rect(x, y, this.tileSize, this.tileSize);
         // this.sketch.circle(x, y, this.tileSize, this.tileSize);
-        
       }
     }
     this.sketch.fill(0, 255, 0);
-    const objPos = this.getSquareCenter(this.targetPos.x, this.targetPos.y, this.tileSize);
+    const objPos = this.getSquareCenter(
+      this.targetPos.x,
+      this.targetPos.y,
+      this.tileSize
+    );
     this.sketch.circle(objPos[0], objPos[1], this.tileSize);
   }
   // Get the terrain type at a specific position (x, y)
   getTerrainType(x, y) {
-    if (x >= 0 && x < this.cols * this.tileSize && y >= 0 && y < this.rows * this.tileSize) {
+    if (
+      x >= 0 &&
+      x < this.cols * this.tileSize &&
+      y >= 0 &&
+      y < this.rows * this.tileSize
+    ) {
       let row = floor(y / this.tileSize);
       let col = floor(x / this.tileSize);
       return this.grid[row][col];
@@ -144,3 +158,5 @@ class Environment {
     }
   }
 }
+
+export default Environment;

@@ -1,3 +1,7 @@
+import Environment from "./modules/env.js";
+import Agent from "./modules/agent.js";
+import Manager from "./modules/manager.js";
+
 var terrainNoise = 0.15; // Adjust this value to control the level of detail in the terrain
 
 let env;
@@ -11,14 +15,8 @@ const mainWindow = (sketch) => {
     sketch.createCanvas(canvasSize, canvasSize);
     let rows = 30;
     let cols = 30;
-    let tileSize = (sketch.width / cols);
-    env = new Environment(
-      sketch,
-      rows,
-      cols,
-      tileSize,
-      terrainNoise
-    );
+    let tileSize = sketch.width / cols;
+    env = new Environment(sketch, rows, cols, tileSize, terrainNoise);
     agent = new Agent(sketch, env.getGrid(), tileSize);
   };
 
@@ -31,9 +29,10 @@ const mainWindow = (sketch) => {
 
 const menu = (sketch) => {
   sketch.setup = () => {
-    canvas = sketch.createCanvas(300, 300);
+    let canvas = sketch.createCanvas(300, 300);
     canvas.position(canvasSize, 0);
-    manager = new Manager(sketch, 
+    manager = new Manager(
+      sketch,
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
         env.randomTargetPos();

@@ -22,3 +22,5 @@ class Manager {
     return this.sliders.terrainNoise.value();
   }
 }
+
+export default Manager;
