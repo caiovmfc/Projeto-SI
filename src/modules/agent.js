@@ -95,6 +95,10 @@ class Agent {
 
     while (queue.length > 0) {
       let current = queue.shift();
+      let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
+      this.sketch.fill(0, 255, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+      await this.sleep(75);
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
         break;
@@ -104,10 +108,6 @@ class Agent {
           visited.push(neighbor);
           queue.push(neighbor);
           path[`${neighbor.x},${neighbor.y}`] = current;
-          let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
-          this.sketch.fill(0, 255, 0);
-          this.sketch.circle(pos[0], pos[1], 5);
-          await this.sleep(75);
         }
       }
     }
