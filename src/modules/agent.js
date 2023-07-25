@@ -135,7 +135,7 @@ class Agent {
     return path;
   }
 
-  dfs(targetPos) {
+  async dfs(targetPos) {
     let stack = [];
     let visited = [];
     let path = [];
@@ -146,6 +146,10 @@ class Agent {
 
     while (stack.length > 0) {
       let current = stack.pop();
+      let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
+      this.sketch.fill(0, 255, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+      await this.sleep(75);
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
         break;
@@ -172,10 +176,17 @@ class Agent {
       path.reverse();
     }
 
+    for (let i of path) {
+      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+      this.sketch.fill(255, 0, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+      await this.sleep(100);
+    }
+
     return path;
   }
 
-  dijkstra(targetPos) {
+  async dijkstra(targetPos) {
     let dist = [];
     let tam = this.map.length;
     let found = false;
@@ -202,6 +213,11 @@ class Agent {
       const w = pq.front().priority;
       const v = pq.front().value;
       pq.dequeue();
+
+      let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      this.sketch.fill(0, 255, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+      await this.sleep(75);
 
       if (v.x == targetPos.x && v.y == targetPos.y) {
         found = true;
@@ -236,6 +252,13 @@ class Agent {
       }
       path.push(this.initialPos);
       path.reverse();
+    }
+
+    for (let i of path) {
+      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+      this.sketch.fill(255, 0, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+      await this.sleep(100);
     }
 
     return path;
