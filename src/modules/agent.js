@@ -4,14 +4,17 @@ class Agent {
     this.map = map;
     this.sketch = sketch;
     this.tileSize = tileSize;
-    this.randomPos = this.getRandomPos();
-    this.pos = sketch.createVector(this.randomPos[0], this.randomPos[1]);
+
+    this.setRandomPos();
+
     this.vel = sketch.createVector(0, 0);
     this.acc = sketch.createVector(0, 0);
-    this.maxSpeed = 4;
+    this.maxSpeed = 1;
     this.maxForce = 0.25;
     this.r = this.tileSize;
-    this.initialPos = this.pos;
+    this.refreshEnvironment = true;
+
+    this.pathToFollow = [];
   }
 
   setGrid(map) {
@@ -34,13 +37,15 @@ class Agent {
   }
 
   setRandomPos() {
-    this.randomPos = this.getRandomPos();
-    this.pos = this.sketch.createVector(this.randomPos[0], this.randomPos[1]);
-    this.initialPos = this.pos;
+    const randomPos = this.getRandomPos(); //in grid coordinates
+    let pos = this.sketch.createVector(randomPos[0], randomPos[1]); //in grid coordinates
+    this.initialPos = pos; //in grid coordinates
+    pos = this.getSquareCenter(pos.x, pos.y, this.tileSize);
+    this.pixelPos = this.sketch.createVector(pos[0], pos[1]); //in pixel coordinates
   }
 
   moveTo(target) {
-    let force = p5.Vector.sub(target, this.pos);
+    let force = p5.Vector.sub(target, this.pixelPos);
     force.setMag(this.maxSpeed);
     force.sub(this.vel);
     force.limit(this.maxForce);
@@ -50,9 +55,8 @@ class Agent {
   update() {
     this.vel.add(this.acc);
     this.vel.limit(this.maxSpeed);
-    this.pos.add(this.vel);
+    this.pixelPos.add(this.vel);
     this.acc.set(0, 0);
-    this.edges();
   }
 
   getNeighbors(current) {
@@ -90,6 +94,8 @@ class Agent {
     let path = [];
     let found = false;
 
+    this.refreshEnvironment = false;
+
     queue.push(this.initialPos);
     visited.push(this.initialPos);
 
@@ -98,7 +104,7 @@ class Agent {
       let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
       this.sketch.fill(0, 255, 0);
       this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(75);
+      await this.sleep(5);
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
         break;
@@ -132,6 +138,10 @@ class Agent {
       await this.sleep(100);
     }
 
+    // this.refreshEnvironment = true;
+    this.pathToFollow = path; //in grid coordinates
+
+    this.refreshEnvironment = true;
     return path;
   }
 
@@ -141,6 +151,8 @@ class Agent {
     let path = [];
     let found = false;
 
+    this.refreshEnvironment = false;
+
     stack.push(this.initialPos);
     visited.push(this.initialPos);
 
@@ -149,7 +161,7 @@ class Agent {
       let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
       this.sketch.fill(0, 255, 0);
       this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(75);
+      await this.sleep(5);
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
         break;
@@ -182,7 +194,8 @@ class Agent {
       this.sketch.circle(pos[0], pos[1], 5);
       await this.sleep(100);
     }
-
+    this.pathToFollow = path;
+    this.refreshEnvironment = true;
     return path;
   }
 
@@ -192,6 +205,8 @@ class Agent {
     let found = false;
     let path = [];
     let visited = [];
+
+    this.refreshEnvironment = false;
 
     for (let i = 0; i < tam; i++) {
       dist[i] = [];
@@ -217,7 +232,7 @@ class Agent {
       let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
       this.sketch.fill(0, 255, 0);
       this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(75);
+      await this.sleep(5);
 
       if (v.x == targetPos.x && v.y == targetPos.y) {
         found = true;
@@ -261,6 +276,8 @@ class Agent {
       await this.sleep(100);
     }
 
+    this.pathToFollow = path;
+    this.refreshEnvironment = true;
     return path;
   }
 
@@ -293,22 +310,18 @@ class Agent {
     return path;
   }
 
-  //gets the center positonof the square on the coordenate x, y
+  //gets the center position of the square on the coordenate x, y
   getSquareCenter(x, y, width) {
     return [x * width + width / 2, y * width + width / 2];
   }
 
-  draw(targetPos) {
-    const agentPos = this.getSquareCenter(
-      this.pos.x,
-      this.pos.y,
-      this.tileSize
-    );
+  draw() {
+    this.followPath();
     this.sketch.stroke(0);
     this.sketch.strokeWeight(0.2);
     this.sketch.fill(252, 15, 192);
     this.sketch.push();
-    this.sketch.translate(Number(agentPos[0]), Number(agentPos[1]));
+    this.sketch.translate(Number(this.pixelPos.x), Number(this.pixelPos.y));
     this.sketch.rotate(this.vel.heading());
     this.sketch.triangle(
       -this.r / 2,
@@ -319,19 +332,33 @@ class Agent {
       0
     );
     this.sketch.pop();
-
-    // const v = this.dijkstra(targetPos);
-    // for (let i of v) {
-    //   let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-    //   this.sketch.fill(0, 255, 0);
-    //   this.sketch.circle(pos[0], pos[1], 5);
-    // }
   }
 
   sleep(millisecondsDuration) {
     return new Promise((resolve) => {
       setTimeout(resolve, millisecondsDuration);
     });
+  }
+
+  followPath() {
+    if (this.pathToFollow.length > 0) {
+      let target = this.pathToFollow[0]; //target in grid coordinates
+      let targetPos = this.getSquareCenter(target.x, target.y, this.tileSize); //target in pixel coordinates
+      this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]));
+      if (
+        //use distance instead
+        p5.Vector.sub(
+          this.pixelPos,
+          this.sketch.createVector(targetPos[0], targetPos[1])
+        ).mag() <= 5 &&
+        this.pathToFollow.length > 0
+      ) {
+        this.pathToFollow.shift();
+      }
+    } else {
+      this.vel.set(0, 0);
+      this.acc.set(0, 0);
+    }
   }
 }
 

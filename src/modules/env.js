@@ -90,8 +90,9 @@ class Environment {
   }
 
   // Draw the entire environment based on the grid
-  draw() {
-    // noStroke();
+  draw(refreshEnvironment = true) {
+    if (!refreshEnvironment) return;
+
     this.sketch.stroke(100, 100, 100);
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
