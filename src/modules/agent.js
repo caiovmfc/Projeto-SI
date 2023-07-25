@@ -96,8 +96,9 @@ class Agent {
     while (queue.length > 0) {
       let current = queue.shift();
       let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
-      this.sketch.fill(0, 255, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
+      this.sketch.noStroke();
+      this.sketch.fill(255, 0, 0, 100);
+      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
       await this.sleep(75);
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
@@ -125,10 +126,12 @@ class Agent {
       path.reverse();
     }
 
+    //desenha o caminho
     for (let i of path) {
       let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-      this.sketch.fill(255, 0, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 150);
+      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
       await this.sleep(100);
     }
 

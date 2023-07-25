@@ -92,7 +92,7 @@ class Environment {
   // Draw the entire environment based on the grid
   draw() {
     // noStroke();
-    this.sketch.stroke(100, 100, 100);
+    this.sketch.stroke(50, 50, 50, 50);
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let x = j * this.tileSize;
