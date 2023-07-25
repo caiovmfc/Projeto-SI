@@ -10,6 +10,8 @@ let agent;
 
 let canvasSize = 720;
 
+let firsrtTime = true;
+
 const mainWindow = (sketch) => {
   sketch.setup = () => {
     sketch.createCanvas(canvasSize, canvasSize);
@@ -21,7 +23,7 @@ const mainWindow = (sketch) => {
     sketch.background(220);
     env.draw();
   };
-
+  
   sketch.draw = () => {
     agent.draw(env.targetPos);
   };
@@ -35,13 +37,19 @@ const menu = (sketch) => {
       sketch,
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
-        env.randomTargetPos();
         env.draw();
         agent.setGrid(newGrid);
-        agent.setRandomPos();
       },
       () => {
-        console.log(agent.bfs(env.targetPos));
+        if(firsrtTime){
+          console.log(agent.bfs(env.targetPos));
+          firsrtTime = false;
+        }else{
+          env.randomTargetPos();
+          agent.setRandomPos();
+          console.log(agent.bfs(env.targetPos));
+        }
+        env.draw();
       },
       () => {
         console.log(agent.dfs(env.targetPos));

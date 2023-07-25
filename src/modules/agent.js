@@ -132,7 +132,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 150);
       this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
-      await this.sleep(100);
+      await this.sleep(75);
     }
 
     return path;
