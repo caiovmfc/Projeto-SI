@@ -21,7 +21,7 @@ const mainWindow = (sketch) => {
   };
 
   sketch.draw = () => {
-    env.draw(agent.refreshEnvironment);
+    env.draw(agent.pathToFollow, agent.refreshEnvironment);
     agent.draw();
     agent.update();
   };
@@ -36,7 +36,7 @@ const menu = (sketch) => {
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
         env.randomTargetPos();
-        env.draw();
+        env.draw(agent.pathToFollow, agent.refreshEnvironment);
         agent.setGrid(newGrid);
         agent.setRandomPos();
       },

@@ -131,12 +131,13 @@ class Agent {
       path.reverse();
     }
 
-    for (let i of path) {
-      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-      this.sketch.fill(255, 0, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(100);
-    }
+    //draws path
+    // for (let i of path) {
+    //   let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+    //   this.sketch.fill(255, 0, 0);
+    //   this.sketch.circle(pos[0], pos[1], 5);
+    //   await this.sleep(100);
+    // }
 
     // this.refreshEnvironment = true;
     this.pathToFollow = path; //in grid coordinates
