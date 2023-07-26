@@ -94,6 +94,7 @@ class Environment {
     if (!refreshEnvironment) return;
 
     this.sketch.stroke(100, 100, 100);
+
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let x = j * this.tileSize;
