@@ -20,12 +20,12 @@ const mainWindow = (sketch) => {
     let tileSize = sketch.width / cols;
     env = new Environment(sketch, rows, cols, tileSize, terrainNoise);
     agent = new Agent(sketch, env.getGrid(), tileSize);
-    sketch.background(220);
-    env.draw();
   };
   
   sketch.draw = () => {
-    agent.draw(env.targetPos);
+    env.draw(agent.pathToFollow, agent.refreshEnvironment);
+    agent.draw();
+    agent.update();
   };
 };
 
@@ -37,19 +37,14 @@ const menu = (sketch) => {
       sketch,
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
-        env.draw();
+
+        env.randomTargetPos();
+        env.draw(agent.pathToFollow, agent.refreshEnvironment);
         agent.setGrid(newGrid);
       },
-      () => {
-        if(firsrtTime){
-          console.log(agent.bfs(env.targetPos));
-          firsrtTime = false;
-        }else{
-          env.randomTargetPos();
-          agent.setRandomPos();
-          console.log(agent.bfs(env.targetPos));
-        }
-        env.draw();
+      async () => {
+        console.log(await agent.bfs(env.targetPos));
+
       },
       () => {
         console.log(agent.dfs(env.targetPos));

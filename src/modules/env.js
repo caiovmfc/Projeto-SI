@@ -90,9 +90,11 @@ class Environment {
   }
 
   // Draw the entire environment based on the grid
-  draw() {
-    // noStroke();
-    this.sketch.stroke(50, 50, 50, 50);
+  draw(path, refreshEnvironment = true) {
+    if (!refreshEnvironment) return;
+
+    this.sketch.stroke(100, 100, 100);
+
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.cols; j++) {
         let x = j * this.tileSize;
@@ -120,7 +122,15 @@ class Environment {
       this.tileSize
     );
     this.sketch.circle(objPos[0], objPos[1], this.tileSize);
+
+    //draw path
+    for (let i of path) {
+      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
+      this.sketch.fill(255, 0, 0);
+      this.sketch.circle(pos[0], pos[1], 5);
+    }
   }
+  
   // Get the terrain type at a specific position (x, y)
   getTerrainType(x, y) {
     if (
