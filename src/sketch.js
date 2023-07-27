@@ -37,7 +37,6 @@ const menu = (sketch) => {
       sketch,
       (tNoise) => {
         const newGrid = env.regenerateGrid(tNoise);
-
         env.randomTargetPos();
         env.draw(agent.pathToFollow, agent.refreshEnvironment);
         agent.setGrid(newGrid);
@@ -50,6 +49,12 @@ const menu = (sketch) => {
       },
       () => {
         console.log(agent.dijkstra(env.targetPos, manager.getDrawingSpeed()));
+      },
+      () => {
+        console.log(agent.greedy(env.targetPos, manager.getDrawingSpeed()));
+      },
+      () => {
+        console.log(agent.astar(env.targetPos, manager.getDrawingSpeed()));
       }
     );
   };
