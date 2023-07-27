@@ -125,9 +125,10 @@ class Environment {
 
     //draw path
     for (let i of path) {
-      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-      this.sketch.fill(255, 0, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 100);
+      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
+
     }
   }
   

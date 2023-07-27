@@ -1,3 +1,8 @@
+const TERRAIN_SAND = 1;
+const TERRAIN_WATER = 10;
+const TERRAIN_MUD = 5;
+const TERRAIN_OBSTACLE = Infinity;
+
 import { PriorityQueue } from "./priorityQueue.js";
 class Agent {
   constructor(sketch, map, tileSize) {
@@ -103,11 +108,6 @@ class Agent {
       let current = queue.shift();
       let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
 
-      this.sketch.noStroke();
-      this.sketch.fill(255, 0, 0, 100);
-      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
-      await this.sleep(75);
-
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
         break;
@@ -117,8 +117,17 @@ class Agent {
           visited.push(neighbor);
           queue.push(neighbor);
           path[`${neighbor.x},${neighbor.y}`] = current;
+          this.sketch.fill(255, 255, 255, 150);
+          this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
         }
       }
+
+      //pinta da cor dos visitados
+      this.sketch.noStroke();
+      this.sketch.fill(255, 0, 0, 100);
+      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
+      await this.sleep(75);
+
     }
 
     if (found) {
@@ -135,16 +144,14 @@ class Agent {
     }
 
     //draws path
-    // for (let i of path) {
-    //   let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-    //   this.sketch.fill(255, 0, 0);
-    //   this.sketch.circle(pos[0], pos[1], 5);
-    //   await this.sleep(100);
-    // }
+    for (let i of path) {
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 100);
+      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
+      await this.sleep(100);
+    }
 
-    // this.refreshEnvironment = true;
     this.pathToFollow = path; //in grid coordinates
-
 
     this.refreshEnvironment = true;
     return path;
