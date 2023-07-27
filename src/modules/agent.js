@@ -122,16 +122,23 @@ class Agent {
           path[`${neighbor.x},${neighbor.y}`] = current;
           //desenha a fronteira
           this.sketch.fill(255, 255, 255, 150);
-          this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
+          this.sketch.square(
+            neighbor.x * this.tileSize,
+            neighbor.y * this.tileSize,
+            this.tileSize
+          );
         }
       }
 
       //desenha os visitados
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
-      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
+      this.sketch.square(
+        pos[0] - this.tileSize / 2,
+        pos[1] - this.tileSize / 2,
+        this.tileSize
+      );
       await this.sleep(drawingSpeed);
-
     }
 
     if (found) {
@@ -151,14 +158,18 @@ class Agent {
     for (let i of path) {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
-      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
+      this.sketch.square(
+        i.x * this.tileSize,
+        i.y * this.tileSize,
+        this.tileSize
+      );
       await this.sleep(drawingSpeed);
     }
 
     this.pathToFollow = path; //in grid coordinates
 
     this.refreshEnvironment = true;
-    return path;
+    return true;
   }
 
   async dfs(targetPos, drawingSpeed = 25) {
@@ -187,16 +198,24 @@ class Agent {
           visited.push(neighbor);
           stack.push(neighbor);
           path[`${neighbor.x},${neighbor.y}`] = current;
-           //desenha a fronteira
-           this.sketch.fill(255, 255, 255, 150);
-           this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
+          //desenha a fronteira
+          this.sketch.fill(255, 255, 255, 150);
+          this.sketch.square(
+            neighbor.x * this.tileSize,
+            neighbor.y * this.tileSize,
+            this.tileSize
+          );
         }
       }
 
       //desenha os visitados
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
-      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
+      this.sketch.square(
+        pos[0] - this.tileSize / 2,
+        pos[1] - this.tileSize / 2,
+        this.tileSize
+      );
       await this.sleep(drawingSpeed);
     }
 
@@ -217,7 +236,11 @@ class Agent {
     for (let i of path) {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
-      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
+      this.sketch.square(
+        i.x * this.tileSize,
+        i.y * this.tileSize,
+        this.tileSize
+      );
       await this.sleep(drawingSpeed);
     }
 
@@ -280,7 +303,11 @@ class Agent {
           path[`${nextV.x},${nextV.y}`] = v;
           //desenha a fronteira
           this.sketch.fill(255, 255, 255, 150);
-          this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
+          this.sketch.square(
+            neighbor.x * this.tileSize,
+            neighbor.y * this.tileSize,
+            this.tileSize
+          );
         }
       }
 
@@ -288,7 +315,11 @@ class Agent {
       let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
-      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
+      this.sketch.square(
+        pos[0] - this.tileSize / 2,
+        pos[1] - this.tileSize / 2,
+        this.tileSize
+      );
       await this.sleep(drawingSpeed);
     }
 
@@ -309,7 +340,11 @@ class Agent {
     for (let i of path) {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
-      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
+      this.sketch.square(
+        i.x * this.tileSize,
+        i.y * this.tileSize,
+        this.tileSize
+      );
       await this.sleep(drawingSpeed);
     }
 
@@ -318,37 +353,227 @@ class Agent {
     return path;
   }
 
-  aStar(targetPos) {
-    let queue = [];
-    let visited = [];
+  async greedy(targetPos, drawingSpeed = 25) {
+    let dist = [];
+    let tam = this.map.length;
+    let found = false;
     let path = [];
-    let current = this.map.get(this.pos.x, this.pos.y);
-    let target = this.map.get(targetPos.x, targetPos.y);
-    queue.push(current);
-    visited.push(current);
-    while (queue.length > 0) {
-      current = queue.shift();
-      if (current === target) {
+    let visited = [];
+
+    this.refreshEnvironment = false;
+
+    for (let i = 0; i < tam; i++) {
+      dist[i] = [];
+      visited[i] = [];
+      for (let j = 0; j < tam; j++) {
+        dist[i][j] = Infinity;
+        visited[i][j] = false;
+      }
+    }
+
+    dist[this.initialPos.x][this.initialPos.y] = 0;
+
+    const pq = new PriorityQueue();
+    pq.enqueue(0, this.initialPos);
+    let i = 0;
+
+    while (!pq.isEmpty()) {
+      i++;
+      const w = pq.front().priority;
+      const v = pq.front().value;
+      pq.dequeue();
+
+      // let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      // this.sketch.fill(0, 255, 0);
+      // this.sketch.circle(pos[0], pos[1], 5);
+      // await this.sleep(drawingSpeed);
+
+      if (v.x == targetPos.x && v.y == targetPos.y) {
+        found = true;
         break;
       }
-      for (let neighbor of current.neighbors) {
-        if (!visited.includes(neighbor)) {
-          visited.push(neighbor);
-          neighbor.parent = current;
-          queue.push(neighbor);
+
+      if (w > dist[v.x][v.y]) {
+        continue;
+      }
+
+      for (let neighbor of this.getNeighbors(v)) {
+        const nextV = neighbor;
+        const nextW = this.calculateHeuristic(nextV, targetPos);
+
+        if (dist[nextV.x][nextV.y] > nextW) {
+          dist[nextV.x][nextV.y] = nextW;
+          pq.enqueue(nextW, nextV);
+
+          path[`${nextV.x},${nextV.y}`] = v;
+
+          this.sketch.fill(255, 255, 255, 150);
+          this.sketch.square(
+            neighbor.x * this.tileSize,
+            neighbor.y * this.tileSize,
+            this.tileSize
+          );
         }
       }
-      queue.sort((a, b) => a.cost - b.cost);
+
+      //desenha os visitados
+      let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      this.sketch.noStroke();
+      this.sketch.fill(255, 0, 0, 100);
+      this.sketch.square(
+        pos[0] - this.tileSize / 2,
+        pos[1] - this.tileSize / 2,
+        this.tileSize
+      );
+      await this.sleep(drawingSpeed);
     }
-    while (current.parent) {
-      path.push(current);
-      current = current.parent;
+
+    if (found) {
+      let currentPosition = targetPos;
+      while (
+        currentPosition.x != this.initialPos.x ||
+        currentPosition.y != this.initialPos.y
+      ) {
+        path.push(currentPosition);
+        currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+      }
+      path.push(this.initialPos);
+      path.reverse();
     }
+
+    //draws path
+    for (let i of path) {
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 100);
+      this.sketch.square(
+        i.x * this.tileSize,
+        i.y * this.tileSize,
+        this.tileSize
+      );
+      await this.sleep(drawingSpeed);
+    }
+
+    this.pathToFollow = path;
+    this.refreshEnvironment = true;
+    return path;
+  }
+
+  async astar(targetPos, drawingSpeed = 25) {
+    let dist = [];
+    let tam = this.map.length;
+    let found = false;
+    let path = [];
+    let visited = [];
+
+    this.refreshEnvironment = false;
+
+    for (let i = 0; i < tam; i++) {
+      dist[i] = [];
+      visited[i] = [];
+      for (let j = 0; j < tam; j++) {
+        dist[i][j] = Infinity;
+        visited[i][j] = false;
+      }
+    }
+
+    dist[this.initialPos.x][this.initialPos.y] = 0;
+
+    const pq = new PriorityQueue();
+    pq.enqueue(0, this.initialPos);
+    let i = 0;
+
+    while (!pq.isEmpty()) {
+      i++;
+      const w = pq.front().priority;
+      const v = pq.front().value;
+      pq.dequeue();
+
+      // let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      // this.sketch.fill(0, 255, 0);
+      // this.sketch.circle(pos[0], pos[1], 5);
+      // await this.sleep(drawingSpeed);
+
+      if (v.x == targetPos.x && v.y == targetPos.y) {
+        found = true;
+        break;
+      }
+
+      if (w > dist[v.x][v.y]) {
+        continue;
+      }
+
+      for (let neighbor of this.getNeighbors(v)) {
+        const nextV = neighbor;
+        const nextW = this.map[neighbor.y][neighbor.x];
+        const heuristicDistance = this.calculateHeuristic(nextV, targetPos);
+
+        if (
+          dist[nextV.x][nextV.y] >
+          dist[v.x][v.y] + nextW + heuristicDistance
+        ) {
+          dist[nextV.x][nextV.y] = dist[v.x][v.y] + nextW + heuristicDistance;
+          pq.enqueue(dist[nextV.x][nextV.y], nextV);
+          path[`${nextV.x},${nextV.y}`] = v;
+          //desenha a fronteira
+          this.sketch.fill(255, 255, 255, 150);
+          this.sketch.square(
+            neighbor.x * this.tileSize,
+            neighbor.y * this.tileSize,
+            this.tileSize
+          );
+        }
+      }
+
+      //desenha os visitados
+      let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      this.sketch.noStroke();
+      this.sketch.fill(255, 0, 0, 100);
+      this.sketch.square(
+        pos[0] - this.tileSize / 2,
+        pos[1] - this.tileSize / 2,
+        this.tileSize
+      );
+      await this.sleep(drawingSpeed);
+    }
+
+    if (found) {
+      let currentPosition = targetPos;
+      while (
+        currentPosition.x != this.initialPos.x ||
+        currentPosition.y != this.initialPos.y
+      ) {
+        path.push(currentPosition);
+        currentPosition = path[`${currentPosition.x},${currentPosition.y}`];
+      }
+      path.push(this.initialPos);
+      path.reverse();
+    }
+
+    //draws path
+    for (let i of path) {
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 100);
+      this.sketch.square(
+        i.x * this.tileSize,
+        i.y * this.tileSize,
+        this.tileSize
+      );
+      await this.sleep(drawingSpeed);
+    }
+
+    this.pathToFollow = path;
+    this.refreshEnvironment = true;
     return path;
   }
 
   getSquareCenter(x, y, width) {
     return [x * width + width / 2, y * width + width / 2];
+  }
+
+  calculateHeuristic(pos1, pos2) {
+    return Math.sqrt(
+      Math.abs(pos1.x - pos2.x) ** 2 + Math.abs(pos1.y - pos2.y) ** 2
+    );
   }
 
   draw() {
@@ -380,14 +605,14 @@ class Agent {
     if (this.pathToFollow.length > 0) {
       let target = this.pathToFollow[0]; //target in grid coordinates
       let targetPos = this.getSquareCenter(target.x, target.y, this.tileSize); //target in pixel coordinates
-     
-      if(this.map[target.y][target.x] == 1){
+
+      if (this.map[target.y][target.x] == 1) {
         console.log("sand");
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 3);
-      }else if(this.map[target.y][target.x] == 5){
+      } else if (this.map[target.y][target.x] == 5) {
         console.log("mud");
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 1.5);
-      }else{
+      } else {
         console.log("water");
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 0.75);
       }
@@ -405,6 +630,11 @@ class Agent {
     } else {
       this.vel.set(0, 0);
       this.acc.set(0, 0);
+      /////
+      if (this.runningBfs) {
+        this.setRandomPos();
+        this.bfs(this.targetPos);
+      }
     }
   }
 }

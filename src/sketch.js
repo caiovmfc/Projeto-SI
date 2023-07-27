@@ -21,7 +21,7 @@ const mainWindow = (sketch) => {
     env = new Environment(sketch, rows, cols, tileSize, terrainNoise);
     agent = new Agent(sketch, env.getGrid(), tileSize);
   };
-  
+
   sketch.draw = () => {
     env.draw(agent.pathToFollow, agent.refreshEnvironment);
     agent.draw();
@@ -44,7 +44,6 @@ const menu = (sketch) => {
       },
       async () => {
         console.log(await agent.bfs(env.targetPos, manager.getDrawingSpeed()));
-
       },
       () => {
         console.log(agent.dfs(env.targetPos, manager.getDrawingSpeed()));

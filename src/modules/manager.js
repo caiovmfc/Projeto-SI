@@ -4,12 +4,14 @@ class Manager {
     regenTerrainCallback,
     bfsCallback,
     dfsCallback,
-    dijkstraCallback
+    dijkstraCallback,
+    greedyCallback,
+    aStarCallback
   ) {
     this.sketch = sketch;
     this.sliders = {
       terrainNoise: this.sketch.createSlider(0, 1, 0.15, 0.01),
-      drawingSpeed: this.sketch.createSlider(0, 75, 25, 1)
+      drawingSpeed: this.sketch.createSlider(0, 75, 25, 1),
     };
 
     this.sliders.terrainNoise.position(730, 38);
@@ -29,9 +31,17 @@ class Manager {
     this.dfsButton.position(730, 180);
     this.dfsButton.mousePressed(dfsCallback);
 
-    this.dijkstraButton = this.sketch.createButton("Dijkstra");
+    this.dijkstraButton = this.sketch.createButton("Uniform Cost");
     this.dijkstraButton.position(730, 205);
     this.dijkstraButton.mousePressed(dijkstraCallback);
+
+    this.greedyButton = this.sketch.createButton("Greedy");
+    this.greedyButton.position(730, 230);
+    this.greedyButton.mousePressed(greedyCallback);
+
+    this.aStarButton = this.sketch.createButton("A*");
+    this.aStarButton.position(730, 255);
+    this.aStarButton.mousePressed(aStarCallback);
   }
 
   getTerrainNoise() {

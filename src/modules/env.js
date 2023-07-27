@@ -84,7 +84,7 @@ class Environment {
     return this.grid;
   }
 
-  //gets the center positonof the square on the coordenate x, y
+  //gets the center position of the square on the coordenate x, y
   getSquareCenter(x, y, width) {
     return [x * width + width / 2, y * width + width / 2];
   }
@@ -127,11 +127,14 @@ class Environment {
     for (let i of path) {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
-      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
-
+      this.sketch.square(
+        i.x * this.tileSize,
+        i.y * this.tileSize,
+        this.tileSize
+      );
     }
   }
-  
+
   // Get the terrain type at a specific position (x, y)
   getTerrainType(x, y) {
     if (
