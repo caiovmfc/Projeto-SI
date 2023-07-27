@@ -120,12 +120,13 @@ class Agent {
           visited.push(neighbor);
           queue.push(neighbor);
           path[`${neighbor.x},${neighbor.y}`] = current;
+          //desenha a fronteira
           this.sketch.fill(255, 255, 255, 150);
           this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
         }
       }
 
-      //pinta da cor dos visitados
+      //desenha os visitados
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
       this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
@@ -174,9 +175,9 @@ class Agent {
     while (stack.length > 0) {
       let current = stack.pop();
       let pos = this.getSquareCenter(current.x, current.y, this.tileSize);
-      this.sketch.fill(0, 255, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(5);
+      // this.sketch.fill(0, 255, 0);
+      // this.sketch.circle(pos[0], pos[1], 5);
+      // await this.sleep(5);
       if (current.x == targetPos.x && current.y == targetPos.y) {
         found = true;
         break;
@@ -186,8 +187,17 @@ class Agent {
           visited.push(neighbor);
           stack.push(neighbor);
           path[`${neighbor.x},${neighbor.y}`] = current;
+           //desenha a fronteira
+           this.sketch.fill(255, 255, 255, 150);
+           this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
         }
       }
+
+      //desenha os visitados
+      this.sketch.noStroke();
+      this.sketch.fill(255, 0, 0, 100);
+      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
+      await this.sleep(10);
     }
 
     if (found) {
@@ -203,12 +213,14 @@ class Agent {
       path.reverse();
     }
 
+    //draws path
     for (let i of path) {
-      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-      this.sketch.fill(255, 0, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(100);
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 100);
+      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
+      await this.sleep(5);
     }
+
     this.pathToFollow = path;
     this.refreshEnvironment = true;
     return path;
