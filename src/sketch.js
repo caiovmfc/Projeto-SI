@@ -43,11 +43,11 @@ const menu = (sketch) => {
         agent.setGrid(newGrid);
       },
       async () => {
-        console.log(await agent.bfs(env.targetPos));
+        console.log(await agent.bfs(env.targetPos, manager.getDrawingSpeed()));
 
       },
       () => {
-        console.log(agent.dfs(env.targetPos));
+        console.log(agent.dfs(env.targetPos, manager.getDrawingSpeed()));
       },
       () => {
         console.log(agent.dijkstra(env.targetPos));
@@ -60,8 +60,9 @@ const menu = (sketch) => {
     sketch.textSize(16);
     sketch.textFont("Georgia");
     sketch.text("Terrain noise", 10, 32);
+    sketch.text("Drawing Speed", 10, 90);
     sketch.fill(0);
-    sketch.text(`${manager.getTerrainNoise()}`, 170, 55);
+    sketch.text(`${manager.getTerrainNoise()}`, 180, 55);
   };
 };
 

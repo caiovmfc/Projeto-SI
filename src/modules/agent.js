@@ -96,7 +96,7 @@ class Agent {
     return false;
   }
 
-  async bfs(targetPos) {
+  async bfs(targetPos, drawingSpeed = 25) {
     let queue = [];
     let visited = [];
     let path = [];
@@ -130,7 +130,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
       this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
-      await this.sleep(0);
+      await this.sleep(drawingSpeed);
 
     }
 
@@ -152,7 +152,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
       this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
-      await this.sleep(0);
+      await this.sleep(drawingSpeed);
     }
 
     this.pathToFollow = path; //in grid coordinates
@@ -161,7 +161,7 @@ class Agent {
     return path;
   }
 
-  async dfs(targetPos) {
+  async dfs(targetPos, drawingSpeed = 25) {
     let stack = [];
     let visited = [];
     let path = [];
@@ -197,7 +197,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
       this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
-      await this.sleep(10);
+      await this.sleep(drawingSpeed);
     }
 
     if (found) {
@@ -218,7 +218,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
       this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
-      await this.sleep(5);
+      await this.sleep(drawingSpeed);
     }
 
     this.pathToFollow = path;
@@ -259,7 +259,7 @@ class Agent {
       let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
       this.sketch.fill(0, 255, 0);
       this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(5);
+      await this.sleep(drawingSpeed);
 
       if (v.x == targetPos.x && v.y == targetPos.y) {
         found = true;
@@ -300,7 +300,7 @@ class Agent {
       let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
       this.sketch.fill(255, 0, 0);
       this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(100);
+      await this.sleep(drawingSpeed);
     }
 
     this.pathToFollow = path;
