@@ -15,7 +15,7 @@ class Agent {
     this.vel = sketch.createVector(0, 0);
     this.acc = sketch.createVector(0, 0);
     this.maxSpeed = 1;
-    this.maxForce = 0.25;
+    this.maxForce = 0.2;
     this.r = this.tileSize;
     this.refreshEnvironment = true;
 
@@ -49,12 +49,15 @@ class Agent {
     this.pixelPos = this.sketch.createVector(pos[0], pos[1]); //in pixel coordinates
   }
 
-  moveTo(target) {
+  moveTo(target, mult = 1) {
+    this.maxSpeed = mult;
+    // this.maxForce = mult/1;
+
     let force = p5.Vector.sub(target, this.pixelPos);
     force.setMag(this.maxSpeed);
     force.sub(this.vel);
     force.limit(this.maxForce);
-    this.acc.add(force);
+    this.acc.add(force.mult(mult));
   }
 
   update() {
@@ -126,7 +129,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(255, 0, 0, 100);
       this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
-      await this.sleep(75);
+      await this.sleep(0);
 
     }
 
@@ -148,7 +151,7 @@ class Agent {
       this.sketch.noStroke();
       this.sketch.fill(0, 255, 0, 100);
       this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
-      await this.sleep(100);
+      await this.sleep(0);
     }
 
     this.pathToFollow = path; //in grid coordinates
@@ -322,7 +325,6 @@ class Agent {
     return path;
   }
 
-  //gets the center position of the square on the coordenate x, y
   getSquareCenter(x, y, width) {
     return [x * width + width / 2, y * width + width / 2];
   }
@@ -356,7 +358,18 @@ class Agent {
     if (this.pathToFollow.length > 0) {
       let target = this.pathToFollow[0]; //target in grid coordinates
       let targetPos = this.getSquareCenter(target.x, target.y, this.tileSize); //target in pixel coordinates
-      this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]));
+     
+      if(this.map[target.y][target.x] == 1){
+        console.log("sand");
+        this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 3);
+      }else if(this.map[target.y][target.x] == 5){
+        console.log("mud");
+        this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 1.5);
+      }else{
+        console.log("water");
+        this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 0.75);
+      }
+
       if (
         //use distance instead
         p5.Vector.sub(
