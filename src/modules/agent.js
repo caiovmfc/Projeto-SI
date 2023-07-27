@@ -226,7 +226,7 @@ class Agent {
     return path;
   }
 
-  async dijkstra(targetPos) {
+  async dijkstra(targetPos, drawingSpeed = 25) {
     let dist = [];
     let tam = this.map.length;
     let found = false;
@@ -256,10 +256,10 @@ class Agent {
       const v = pq.front().value;
       pq.dequeue();
 
-      let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
-      this.sketch.fill(0, 255, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
-      await this.sleep(drawingSpeed);
+      // let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      // this.sketch.fill(0, 255, 0);
+      // this.sketch.circle(pos[0], pos[1], 5);
+      // await this.sleep(drawingSpeed);
 
       if (v.x == targetPos.x && v.y == targetPos.y) {
         found = true;
@@ -277,10 +277,19 @@ class Agent {
         if (dist[nextV.x][nextV.y] > dist[v.x][v.y] + nextW) {
           dist[nextV.x][nextV.y] = dist[v.x][v.y] + nextW;
           pq.enqueue(dist[nextV.x][nextV.y], nextV);
-
           path[`${nextV.x},${nextV.y}`] = v;
+          //desenha a fronteira
+          this.sketch.fill(255, 255, 255, 150);
+          this.sketch.square(neighbor.x*this.tileSize, neighbor.y*this.tileSize, this.tileSize);
         }
       }
+
+      //desenha os visitados
+      let pos = this.getSquareCenter(v.x, v.y, this.tileSize);
+      this.sketch.noStroke();
+      this.sketch.fill(255, 0, 0, 100);
+      this.sketch.square(pos[0] - this.tileSize/2, pos[1] -this.tileSize/2, this.tileSize);
+      await this.sleep(drawingSpeed);
     }
 
     if (found) {
@@ -296,10 +305,11 @@ class Agent {
       path.reverse();
     }
 
+    //draws path
     for (let i of path) {
-      let pos = this.getSquareCenter(i.x, i.y, this.tileSize);
-      this.sketch.fill(255, 0, 0);
-      this.sketch.circle(pos[0], pos[1], 5);
+      this.sketch.noStroke();
+      this.sketch.fill(0, 255, 0, 100);
+      this.sketch.square(i.x*this.tileSize, i.y*this.tileSize, this.tileSize);
       await this.sleep(drawingSpeed);
     }
 

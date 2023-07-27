@@ -50,7 +50,7 @@ const menu = (sketch) => {
         console.log(agent.dfs(env.targetPos, manager.getDrawingSpeed()));
       },
       () => {
-        console.log(agent.dijkstra(env.targetPos));
+        console.log(agent.dijkstra(env.targetPos, manager.getDrawingSpeed()));
       }
     );
   };
