@@ -70,15 +70,10 @@ class Agent {
   }
 
   getNeighbors(current) {
-    const neighborsOffsets = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1], // horizontal
-      [-1, -1],
-      [1, 1],
-      [-1, 1],
-      [1, -1], // diagonal
+    const neighborsOffsets = 
+    [
+        [-1, 0],[1, 0],[0, -1],[0, 1], // horizontal
+        [-1, -1],[1, 1],[-1, 1],[1, -1], // diagonal
     ];
 
     const neighbors = [];
@@ -97,7 +92,17 @@ class Agent {
         newY < length &&
         this.map[newY][newX] !== Infinity
       ) {
-        neighbors.push(this.sketch.createVector(newX, newY));
+        
+        if (offset[0] !== 0 && offset[1] !== 0) { //Check if it is diagonal
+            const isHorizontalPathFree = this.map[y][newX] !== Infinity;
+            const isVerticalPathFree = this.map[newY][x] !== Infinity;
+            if (isHorizontalPathFree && isVerticalPathFree) {
+              neighbors.push(this.sketch.createVector(newX, newY));
+            }
+        } else {
+            neighbors.push(this.sketch.createVector(newX, newY));
+        }
+
       }
     }
 
