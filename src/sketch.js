@@ -45,14 +45,23 @@ const mainWindow = (sketch) => {
       env.randomTargetPos();
     }
 
-    if(searchType == 0){
-      //so desenha
-    }else if (searchType == 1 && agent.state == 0){
+    if (searchType == 1 && agent.state == 0){
       agent.state = 1;
       agent.bfs(env.targetPos, manager.getDrawingSpeed()).then(() => agent.state = 2);
+    }else if (searchType == 2 && agent.state == 0){
+      agent.state = 1;
+      agent.dfs(env.targetPos, manager.getDrawingSpeed()).then(() => agent.state = 2);
+    }else if (searchType == 3 && agent.state == 0){
+      agent.state = 1;
+      agent.dijkstra(env.targetPos, manager.getDrawingSpeed()).then(() => agent.state = 2);
+    }else if (searchType == 4 && agent.state == 0){
+      agent.state = 1;
+      agent.greedy(env.targetPos, manager.getDrawingSpeed()).then(() => agent.state = 2);
+    }else if (searchType == 5 && agent.state == 0){
+      agent.state = 1;
+      agent.astar(env.targetPos, manager.getDrawingSpeed()).then(() => agent.state = 2);
     }
 
-    
     env.draw(agent.pathToFollow, agent.refreshEnvironment);
     agent.draw();
   };
@@ -90,6 +99,9 @@ const menu = (sketch) => {
       () => {
         // console.log(agent.astar(env.targetPos, manager.getDrawingSpeed()));
         searchType = 5;
+      },
+      () =>{
+        searchType = 0;
       }
     );
   };

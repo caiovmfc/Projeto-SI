@@ -6,7 +6,8 @@ class Manager {
     dfsCallback,
     dijkstraCallback,
     greedyCallback,
-    aStarCallback
+    aStarCallback,
+    stopCallback
   ) {
     this.sketch = sketch;
     this.sliders = {
@@ -42,6 +43,10 @@ class Manager {
     this.aStarButton = this.sketch.createButton("A*");
     this.aStarButton.position(730, 255);
     this.aStarButton.mousePressed(aStarCallback);
+
+    this.stopButton = this.sketch.createButton("Stop");
+    this.stopButton.position(875, 130);
+    this.stopButton.mousePressed(stopCallback)
   }
 
   getTerrainNoise() {
