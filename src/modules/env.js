@@ -108,7 +108,7 @@ class Environment {
         } else if (terrain === TERRAIN_WATER) {
           this.sketch.fill(100, 150, 240);
         } else if (terrain === TERRAIN_OBSTACLE) {
-          this.sketch.fill(120, 120, 120);
+          this.sketch.fill(0, 0, 0);
         }
 
         this.sketch.rect(x, y, this.tileSize, this.tileSize);

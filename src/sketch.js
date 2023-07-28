@@ -10,7 +10,7 @@ let agent;
 
 let canvasSize = 720;
 
-let firsrtTime = true;
+//
 
 const mainWindow = (sketch) => {
   sketch.setup = () => {
