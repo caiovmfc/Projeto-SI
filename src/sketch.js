@@ -10,7 +10,20 @@ let agent;
 
 let canvasSize = 720;
 
-//
+// 0 - no search
+let searchType = 0;
+
+const STATE = {
+  PI: 0,
+  E: 1,
+  G: 2
+};
+
+const SEARCH = {
+  PI: 0,
+  E: 1,
+  G: 2
+};
 
 const mainWindow = (sketch) => {
   sketch.setup = () => {
@@ -23,9 +36,25 @@ const mainWindow = (sketch) => {
   };
 
   sketch.draw = () => {
+
+    const targetSquare = env.getSquareCenter(env.targetPos.x, env.targetPos.y, env.tileSize);
+    const targetSquareVec = sketch.createVector(targetSquare[0], targetSquare[1]);
+    
+    if (agent.pixelPos.dist(targetSquareVec) < 5){
+      agent.initialPos = env.targetPos;
+      env.randomTargetPos();
+    }
+
+    if(searchType == 0){
+      //so desenha
+    }else if (searchType == 1 && agent.state == 0){
+      agent.state = 1;
+      agent.bfs(env.targetPos, manager.getDrawingSpeed()).then(() => agent.state = 2);
+    }
+
+    
     env.draw(agent.pathToFollow, agent.refreshEnvironment);
     agent.draw();
-    agent.update();
   };
 };
 
@@ -43,24 +72,30 @@ const menu = (sketch) => {
         agent.setRandomPos();
       },
       async () => {
-        console.log(await agent.bfs(env.targetPos, manager.getDrawingSpeed()));
+        // console.log(await agent.bfs(env.targetPos, manager.getDrawingSpeed()));
+        searchType = 1;
       },
       () => {
-        console.log(agent.dfs(env.targetPos, manager.getDrawingSpeed()));
+        // console.log(agent.dfs(env.targetPos, manager.getDrawingSpeed()));
+        searchType = 2;
       },
       () => {
-        console.log(agent.dijkstra(env.targetPos, manager.getDrawingSpeed()));
+        // console.log(agent.dijkstra(env.targetPos, manager.getDrawingSpeed()));
+        searchType = 3;
       },
       () => {
-        console.log(agent.greedy(env.targetPos, manager.getDrawingSpeed()));
+        // console.log(agent.greedy(env.targetPos, manager.getDrawingSpeed()));
+        searchType = 4;
       },
       () => {
-        console.log(agent.astar(env.targetPos, manager.getDrawingSpeed()));
+        // console.log(agent.astar(env.targetPos, manager.getDrawingSpeed()));
+        searchType = 5;
       }
     );
   };
 
   sketch.draw = () => {
+    //console.log(searchType);
     sketch.background(255);
     sketch.textSize(16);
     sketch.textFont("Georgia");

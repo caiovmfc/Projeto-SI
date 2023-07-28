@@ -20,6 +20,8 @@ class Agent {
     this.refreshEnvironment = true;
 
     this.pathToFollow = [];
+
+    this.state = 0;
   }
 
   setGrid(map) {
@@ -577,7 +579,7 @@ class Agent {
   }
 
   draw() {
-    this.followPath();
+    this.followPath(); 
     this.sketch.stroke(0);
     this.sketch.strokeWeight(0.2);
     this.sketch.fill(252, 15, 192);
@@ -593,6 +595,7 @@ class Agent {
       0
     );
     this.sketch.pop();
+    this.update();
   }
 
   sleep(millisecondsDuration) {
@@ -607,13 +610,10 @@ class Agent {
       let targetPos = this.getSquareCenter(target.x, target.y, this.tileSize); //target in pixel coordinates
 
       if (this.map[target.y][target.x] == 1) {
-        console.log("sand");
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 3);
       } else if (this.map[target.y][target.x] == 5) {
-        console.log("mud");
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 1.5);
       } else {
-        console.log("water");
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 0.75);
       }
 
@@ -628,13 +628,14 @@ class Agent {
         this.pathToFollow.shift();
       }
     } else {
+      //para o agente
       this.vel.set(0, 0);
       this.acc.set(0, 0);
-      /////
-      if (this.runningBfs) {
-        this.setRandomPos();
-        this.bfs(this.targetPos);
+      // atualiza o coisa
+      if(this.state == 2){
+        this.state = 0;
       }
+     
     }
   }
 }
