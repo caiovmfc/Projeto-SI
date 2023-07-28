@@ -70,34 +70,37 @@ class Agent {
   }
 
   getNeighbors(current) {
-    let neighbors = [];
-    let length = this.map.length;
-    let x = current.x;
-    let y = current.y;
-    if (x < length - 1 && this.map[y][x + 1] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x + 1, y));
+    const neighborsOffsets = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1], // horizontal
+      [-1, -1],
+      [1, 1],
+      [-1, 1],
+      [1, -1], // diagonal
+    ];
+
+    const neighbors = [];
+    const length = this.map.length;
+    const x = current.x;
+    const y = current.y;
+
+    for (const offset of neighborsOffsets) {
+      const newX = x + offset[0];
+      const newY = y + offset[1];
+
+      if (
+        newX >= 0 &&
+        newX < length &&
+        newY >= 0 &&
+        newY < length &&
+        this.map[newY][newX] !== Infinity
+      ) {
+        neighbors.push(this.sketch.createVector(newX, newY));
+      }
     }
-    if (x > 0 && this.map[y][x - 1] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x - 1, y));
-    }
-    if (y < length - 1 && this.map[y + 1][x] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x, y + 1));
-    }
-    if (y > 0 && this.map[y - 1][x] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x, y - 1));
-    }
-    if (x < length - 1 && y < length - 1 && this.map[y + 1][x + 1] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x + 1, y + 1));
-    }
-    if (x > 0 && y > 0 && this.map[y - 1][x - 1] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x - 1, y - 1));
-    }
-    if (y < length - 1 && x > 0 && this.map[y + 1][x - 1] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x - 1, y + 1));
-    }
-    if (y > 0 && x < length - 1 && this.map[y - 1][x + 1] !== Infinity) {
-      neighbors.push(this.sketch.createVector(x + 1, y - 1));
-    }
+
     return neighbors;
   }
 
@@ -413,7 +416,7 @@ class Agent {
 
       for (let neighbor of this.getNeighbors(v)) {
         const nextV = neighbor;
-        const nextW = this.calculateHeuristic(nextV, targetPos);
+        const nextW = this.getEuclideanDistance(nextV, targetPos);
 
         if (dist[nextV.x][nextV.y] > nextW) {
           dist[nextV.x][nextV.y] = nextW;
@@ -519,10 +522,11 @@ class Agent {
       for (let neighbor of this.getNeighbors(v)) {
         const nextV = neighbor;
         const nextW = this.map[neighbor.y][neighbor.x] / 100;
-        const heuristicDistance = this.calculateHeuristic(nextV, targetPos);
+        const heuristicDistance =
+          this.getEuclideanDistance(nextV, targetPos) * 10;
 
-        console.log(nextW, heuristicDistance)
-        
+        console.log(nextW, heuristicDistance);
+
         if (
           dist[nextV.x][nextV.y] >
           dist[v.x][v.y] + nextW + heuristicDistance
@@ -586,16 +590,18 @@ class Agent {
     return [x * width + width / 2, y * width + width / 2];
   }
 
-  calculateHeuristic(pos1, pos2) {
-    //let heuristic = Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y);
-    let heuristic = Math.sqrt(
+  getEuclideanDistance(pos1, pos2) {
+    return Math.sqrt(
       Math.abs(pos1.x - pos2.x) ** 2 + Math.abs(pos1.y - pos2.y) ** 2
-      );
-    return heuristic;
+    );
+  }
+
+  getManhattanDistance(pos1, pos2) {
+    return Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y);
   }
 
   draw() {
-    this.followPath(); 
+    this.followPath();
     this.sketch.stroke(0);
     this.sketch.strokeWeight(0.2);
     this.sketch.fill(252, 15, 192);
@@ -648,10 +654,9 @@ class Agent {
       this.vel.set(0, 0);
       this.acc.set(0, 0);
       // atualiza o coisa
-      if(this.state == 2){
+      if (this.state == 2) {
         this.state = 0;
       }
-     
     }
   }
 }
