@@ -1,6 +1,6 @@
 const TERRAIN_SAND = 1;
-const TERRAIN_WATER = 10;
-const TERRAIN_MUD = 5;
+const TERRAIN_MUD = 10;
+const TERRAIN_WATER = 20;
 const TERRAIN_OBSTACLE = Infinity;
 
 import { PriorityQueue } from "./priorityQueue.js";
@@ -85,6 +85,18 @@ class Agent {
     }
     if (y > 0 && this.map[y - 1][x] !== Infinity) {
       neighbors.push(this.sketch.createVector(x, y - 1));
+    }
+    if (x < length - 1 && y < length - 1 && this.map[y + 1][x + 1] !== Infinity) {
+      neighbors.push(this.sketch.createVector(x + 1, y + 1));
+    }
+    if (x > 0 && y > 0 && this.map[y - 1][x - 1] !== Infinity) {
+      neighbors.push(this.sketch.createVector(x - 1, y - 1));
+    }
+    if (y < length - 1 && x > 0 && this.map[y + 1][x - 1] !== Infinity) {
+      neighbors.push(this.sketch.createVector(x - 1, y + 1));
+    }
+    if (y > 0 && x < length - 1 && this.map[y - 1][x + 1] !== Infinity) {
+      neighbors.push(this.sketch.createVector(x + 1, y - 1));
     }
     return neighbors;
   }
@@ -506,9 +518,11 @@ class Agent {
 
       for (let neighbor of this.getNeighbors(v)) {
         const nextV = neighbor;
-        const nextW = this.map[neighbor.y][neighbor.x];
+        const nextW = this.map[neighbor.y][neighbor.x] / 100;
         const heuristicDistance = this.calculateHeuristic(nextV, targetPos);
 
+        console.log(nextW, heuristicDistance)
+        
         if (
           dist[nextV.x][nextV.y] >
           dist[v.x][v.y] + nextW + heuristicDistance
@@ -573,9 +587,11 @@ class Agent {
   }
 
   calculateHeuristic(pos1, pos2) {
-    return Math.sqrt(
+    //let heuristic = Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y);
+    let heuristic = Math.sqrt(
       Math.abs(pos1.x - pos2.x) ** 2 + Math.abs(pos1.y - pos2.y) ** 2
-    );
+      );
+    return heuristic;
   }
 
   draw() {
@@ -609,9 +625,9 @@ class Agent {
       let target = this.pathToFollow[0]; //target in grid coordinates
       let targetPos = this.getSquareCenter(target.x, target.y, this.tileSize); //target in pixel coordinates
 
-      if (this.map[target.y][target.x] == 1) {
+      if (this.map[target.y][target.x] == TERRAIN_SAND) {
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 3);
-      } else if (this.map[target.y][target.x] == 5) {
+      } else if (this.map[target.y][target.x] == TERRAIN_MUD) {
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 1.5);
       } else {
         this.moveTo(this.sketch.createVector(targetPos[0], targetPos[1]), 0.75);

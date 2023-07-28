@@ -1,6 +1,6 @@
 const TERRAIN_SAND = 1;
-const TERRAIN_WATER = 10;
-const TERRAIN_MUD = 5;
+const TERRAIN_MUD = 10;
+const TERRAIN_WATER = 20;
 const TERRAIN_OBSTACLE = Infinity;
 
 class Environment {
