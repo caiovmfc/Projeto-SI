@@ -40,6 +40,7 @@ const menu = (sketch) => {
         env.randomTargetPos();
         env.draw(agent.pathToFollow, agent.refreshEnvironment);
         agent.setGrid(newGrid);
+        agent.setRandomPos();
       },
       async () => {
         console.log(await agent.bfs(env.targetPos, manager.getDrawingSpeed()));
